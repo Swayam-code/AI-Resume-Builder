@@ -14,7 +14,7 @@
 
 
 <p align="center">
-<a href="https://ai-resume-builder-opal.vercel.app/">📱 AI-Resume Builder Demo</a>
+<a href="https://ai-resume-builder-opal.vercel.app/">📱 AI-Resume Builder App</a>
 </p>
  
 <h2 id="layout">🎨 Layout</h2>
