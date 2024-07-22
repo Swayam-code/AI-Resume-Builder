@@ -56,7 +56,7 @@ Here you list all prerequisites necessary for running your project.Make sure to 
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/ai-resume-builder.git
+git clone https://github.com/Swayam-code/AI-Resume-Builder.git
 
 ```
  
@@ -65,7 +65,7 @@ git clone https://github.com/your-username/ai-resume-builder.git
 Go to the project directory and install the dependencies:
 
 ```bash
-cd ai-resume-builder
+cd AI-Resume-Builder
 npm install
 ```
 Start the development server:
