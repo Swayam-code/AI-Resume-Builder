@@ -8,7 +8,7 @@ import { Brain, LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { AIChatSession } from './../../../../../service/AIModal';
 
-const prompt="Job Title: {jobTitle} , Depends on job title give me list of  summery for 3 experience level, Mid Level and Freasher level in 3 -4 lines in array format, With summery and experience_level Field in JSON Format"
+const prompt='Job title: {jobTitle}. Return a JSON array of three resume summaries for entry-level, mid-level and senior candidates. Each object must have exactly "summary" (a string of 3-4 lines) and "experience_level" (a string). Return no markdown.'
 function Summery({enabledNext}) {
     const {resumeInfo,setResumeInfo}=useContext(ResumeInfoContext);
     const [summery,setSummery]=useState();
@@ -24,13 +24,20 @@ function Summery({enabledNext}) {
 
     const GenerateSummeryFromAI=async()=>{
         setLoading(true)
-        const PROMPT=prompt.replace('{jobTitle}',resumeInfo?.jobTitle);
-        console.log(PROMPT);
-        const result=await AIChatSession.sendMessage(PROMPT);
-        console.log(JSON.parse(result.response.text()))
-       
-        setAiGenerateSummeryList(JSON.parse(result.response.text()))
-        setLoading(false);
+        try {
+            const PROMPT=prompt.replace('{jobTitle}',resumeInfo?.jobTitle);
+            const result=await AIChatSession.sendMessage(PROMPT);
+            const summaries = JSON.parse(result.response.text());
+            if (!Array.isArray(summaries) || summaries.length === 0 || summaries.length > 5 ||
+                summaries.some(item => !item || typeof item.summary !== 'string' || typeof item.experience_level !== 'string')) {
+                throw new Error('Invalid summary response');
+            }
+            setAiGenerateSummeryList(summaries);
+        } catch {
+            toast('AI service unavailable. Please try again later.');
+        } finally {
+            setLoading(false);
+        }
     }
 
     const onSave=(e)=>{

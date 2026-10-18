@@ -8,6 +8,7 @@ module.exports = {
     'plugin:react-hooks/recommended',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
+  overrides: [{ files: ['api/**/*.js', 'server/**/*.js', 'tests/**/*.js'], env: { node: true, browser: false } }],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },
   plugins: ['react-refresh'],

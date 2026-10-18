@@ -21,7 +21,7 @@ function Skills() {
     const {resumeInfo,setResumeInfo}=useContext(ResumeInfoContext);
    
     useEffect(()=>{
-        resumeInfo&&setSkillsList(resumeInfo?.skills)
+        resumeInfo&&setSkillsList(resumeInfo?.skills || [])
       },[])
    
     const handleChange=(index,name,value)=>{
