@@ -1,3 +1,4 @@
+import { sanitizeResumeHtml } from '@/lib/sanitizeHtml'
 import { Button } from '@/components/ui/button';
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
 import { Brain, LoaderCircle } from 'lucide-react';
@@ -7,7 +8,7 @@ import { AIChatSession } from './../../../../service/AIModal';
 import { toast } from 'sonner';
 const PROMPT='position titile: {positionTitle} , Depends on position title give me 5-7 bullet points for my experience in resume (Please do not add experince level and No JSON array) , give me result in HTML tags'
 function RichTextEditor({onRichTextEditorChange,index,defaultValue}) {
-    const [value,setValue]=useState(defaultValue);
+    const [value,setValue]=useState(() => sanitizeResumeHtml(defaultValue));
     const {resumeInfo,setResumeInfo}=useContext(ResumeInfoContext)
     const [loading,setLoading]=useState(false);
     const GenerateSummeryFromAI=async()=>{
@@ -18,13 +19,17 @@ function RichTextEditor({onRichTextEditorChange,index,defaultValue}) {
         return ;
       }
       setLoading(true)
-      const prompt=PROMPT.replace('{positionTitle}',resumeInfo.Experience[index].title);
-      
-      const result=await AIChatSession.sendMessage(prompt);
-      console.log(result.response.text());
-      const resp=result.response.text()
-      setValue(resp.replace('[','').replace(']',''));
-      setLoading(false);
+      try {
+        const prompt=PROMPT.replace('{positionTitle}',resumeInfo.Experience[index].title);
+        const result=await AIChatSession.sendMessage(prompt, 'html');
+        const cleanHtml = sanitizeResumeHtml(result.response.text());
+        setValue(cleanHtml);
+        onRichTextEditorChange({ target: { value: cleanHtml } });
+      } catch {
+        toast('AI service unavailable. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     }
   
     return (
@@ -45,8 +50,9 @@ function RichTextEditor({onRichTextEditorChange,index,defaultValue}) {
       </div>
     <EditorProvider>
       <Editor value={value} onChange={(e)=>{
-        setValue(e.target.value);
-        onRichTextEditorChange(e)
+        const cleanHtml = sanitizeResumeHtml(e.target.value);
+        setValue(cleanHtml);
+        onRichTextEditorChange({ target: { value: cleanHtml } })
       }}>
          <Toolbar>
           <BtnBold />

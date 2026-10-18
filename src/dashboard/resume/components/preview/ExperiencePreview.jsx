@@ -1,3 +1,4 @@
+import { sanitizeResumeHtml } from '@/lib/sanitizeHtml'
 import React from 'react'
 
 function ExperiencePreview({resumeInfo}) {
@@ -26,7 +27,7 @@ function ExperiencePreview({resumeInfo}) {
                 {/* <p className='text-xs my-2'>
                     {experience.workSummery}
                 </p> */}
-                <div className='text-xs my-2' dangerouslySetInnerHTML={{__html:experience?.workSummery}} />
+                <div className='text-xs my-2' dangerouslySetInnerHTML={{__html:sanitizeResumeHtml(experience?.workSummery)}} />
             </div>
         ))}
     </div>
